@@ -1,59 +1,80 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
 namespace SpoutDx.Net.Interop;
 
-public partial class SpoutDx
+public sealed class SpoutDx : IDisposable
 {
-    private const string DllName = "SpoutDx.Net.dll";
+    private readonly IntPtr _spoutDxPointer;
 
-    [LibraryImport(DllName)]
-    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    public static partial IntPtr SpoutDx_Create(IntPtr pDevice);
+    public SpoutDx(IntPtr d3d11DevicePointer)
+    {
+        _spoutDxPointer = Interop.SpoutDx_Create(d3d11DevicePointer);
+    }
 
-    [LibraryImport(DllName, StringMarshalling = StringMarshalling.Utf8)]
-    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    public static partial void SpoutDx_SetReceiverName(IntPtr spoutDxPtr, string senderName);
+    public void SetReceiverName(string senderName)
+    {
+        Interop.SpoutDx_SetReceiverName(_spoutDxPointer, senderName);
+    }
 
-    [LibraryImport(DllName)]
-    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    public static partial bool SpoutDx_ReceiveTexture(IntPtr spoutDxPtr);
+    public bool ReceiveTexture()
+    {
+        return Interop.SpoutDx_ReceiveTexture(_spoutDxPointer);
+    }
 
-    [LibraryImport(DllName)]
-    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    public static partial bool SpoutDx_IsUpdated(IntPtr spoutDxPtr);
+    public bool IsUpdated()
+    {
+        return Interop.SpoutDx_IsUpdated(_spoutDxPointer);
+    }
 
-    [LibraryImport(DllName)]
-    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    [return: MarshalAs(UnmanagedType.I1)]
-    public static partial bool SpoutDx_IsFrameNew(IntPtr spoutDxPtr);
+    public bool IsFrameNew()
+    {
+        return Interop.SpoutDx_IsFrameNew(_spoutDxPointer);
+    }
 
-    [LibraryImport(DllName)]
-    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    public static partial IntPtr SpoutDx_GetSenderTexture(IntPtr spoutDxPtr);
+    public IntPtr GetSenderTexture()
+    {
+        return Interop.SpoutDx_GetSenderTexture(_spoutDxPointer);
+    }
 
-    [LibraryImport(DllName)]
-    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    public static partial uint SpoutDx_GetSenderFormat(IntPtr spoutDxPtr);
+    public uint GetSenderFormat()
+    {
+        return Interop.SpoutDx_GetSenderFormat(_spoutDxPointer);
+    }
 
-    [LibraryImport(DllName)]
-    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    public static partial uint SpoutDx_GetSenderWidth(IntPtr spoutDxPtr);
+    public uint GetSenderWidth()
+    {
+        return Interop.SpoutDx_GetSenderWidth(_spoutDxPointer);
+    }
 
-    [LibraryImport(DllName)]
-    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    public static partial uint SpoutDx_GetSenderHeight(IntPtr spoutDxPtr);
+    public uint GetSenderHeight()
+    {
+        return Interop.SpoutDx_GetSenderHeight(_spoutDxPointer);
+    }
 
-    [LibraryImport(DllName)]
-    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    public static partial double SpoutDx_GetSenderFps(IntPtr spoutDxPtr);
+    public long GetSenderFrame()
+    {
+        return Interop.SpoutDx_GetSenderFrame(_spoutDxPointer);
+    }
 
-    [LibraryImport(DllName)]
-    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    public static partial long SpoutDx_GetSenderFrame(IntPtr spoutDxPtr);
+    public string[] GetSenderNames()
+    {
+        var senderList = Interop.SpoutDx_GetSenderList(_spoutDxPointer, out var count);
 
-    [LibraryImport(DllName)]
-    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    public static partial void SpoutDx_ReleaseReceiver(IntPtr spoutDxPtr);
+        var names = new string[count];
+        for (var i = 0; i < count; i++)
+        {
+            IntPtr strPtr = Marshal.ReadIntPtr(senderList, i * IntPtr.Size);
+
+            names[i] = Marshal.PtrToStringAnsi(strPtr)!;
+        }
+
+        Interop.SpoutDx_FreeSenderList(senderList, count);
+
+        return names;
+    }
+
+    public void Dispose()
+    {
+        Interop.SpoutDx_ReleaseReceiver(_spoutDxPointer);
+    }
 }

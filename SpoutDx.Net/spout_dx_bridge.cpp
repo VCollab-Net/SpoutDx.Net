@@ -2,7 +2,7 @@
 
 extern "C" {
 
-    __declspec(dllexport) void* __cdecl SpoutDx_Create(
+    __declspec(dllexport) spoutDX* __cdecl SpoutDx_Create(
         ID3D11Device* pDevice
     )
     {
@@ -55,7 +55,7 @@ extern "C" {
         return spoutDx->IsFrameNew();
     }
 
-    __declspec(dllexport) void* __cdecl SpoutDx_GetSenderTexture(
+    __declspec(dllexport) ID3D11Texture2D* __cdecl SpoutDx_GetSenderTexture(
         void* spoutDxPtr
     )
     {
@@ -109,6 +109,47 @@ extern "C" {
         return spoutDx->GetSenderFrame();
     }
 
+    __declspec(dllexport) char** __cdecl SpoutDx_GetSenderList(
+            void* spoutDxPtr,
+            int* count
+        )
+    {
+        // Map the C++ vector to C-style array
+        auto* spoutDx = reinterpret_cast<spoutDX*>(spoutDxPtr);
+
+        auto namesSize = spoutDx->GetSenderCount();
+        *count = namesSize;
+
+        auto names = static_cast<char**>(malloc(namesSize * sizeof(char*)));
+
+        for (int i = 0; i < namesSize; i++)
+        {
+            names[i] = static_cast<char*>(malloc(100 * sizeof(char)));
+
+            spoutDx->GetSender(i, names[i], 100);
+        }
+
+        return names;
+    }
+
+    __declspec(dllexport) void __cdecl SpoutDx_FreeSenderList(
+        char** senderList,
+        int count
+    )
+    {
+        if (!senderList)
+        {
+            return;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            free(senderList[i]);
+        }
+
+        free((char*)senderList);
+    }
+
     __declspec(dllexport) void __cdecl SpoutDx_ReleaseReceiver(void* spoutDxPtr)
     {
         if (!spoutDxPtr)
@@ -124,4 +165,8 @@ extern "C" {
     }
 
     #pragma endregion Receiver
+
+    #pragma region Utils
+
+    #pragma endregion
 }

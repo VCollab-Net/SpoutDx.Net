@@ -3,7 +3,7 @@
 
 extern "C" {
 
-    __declspec(dllexport) void* __cdecl SpoutDx_Create(
+    __declspec(dllexport) spoutDX* __cdecl SpoutDx_Create(
         ID3D11Device* pDevice
     );
 
@@ -26,7 +26,7 @@ extern "C" {
         void* spoutDxPtr
     );
 
-    __declspec(dllexport) void* __cdecl SpoutDx_GetSenderTexture(
+    __declspec(dllexport) ID3D11Texture2D* __cdecl SpoutDx_GetSenderTexture(
         void* spoutDxPtr
     );
 
@@ -48,6 +48,16 @@ extern "C" {
 
     __declspec(dllexport) INT64 __cdecl SpoutDx_GetSenderFrame(
         void* spoutDxPtr
+    );
+
+    __declspec(dllexport) char** __cdecl SpoutDx_GetSenderList(
+        void* spoutDxPtr,
+        int* count
+    );
+
+    __declspec(dllexport) void __cdecl SpoutDx_FreeSenderList(
+        char** senderList,
+        int count
     );
 
     __declspec(dllexport) void __cdecl SpoutDx_ReleaseReceiver(void* spoutDxPtr);

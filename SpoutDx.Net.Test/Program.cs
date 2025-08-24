@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using Spectre.Console;
 using Veldrid;
 using Veldrid.SPIRV;
 using Veldrid.StartupUtilities;
@@ -20,8 +21,17 @@ internal class Program
         );
 
         // Initialize SpoutDX
-        var spoutDx = Interop.SpoutDx.SpoutDx_Create(gd.GetD3D11Info().Device);
-        Interop.SpoutDx.SpoutDx_SetReceiverName(spoutDx, "VTubeStudioSpout");
+        using var spoutDx = new Interop.SpoutDx(gd.GetD3D11Info().Device);
+
+        var receiverNames = spoutDx.GetSenderNames();
+
+        var receiverName = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("Select a sender to read from")
+                .AddChoices(receiverNames)
+        );
+
+        spoutDx.SetReceiverName(receiverName);
 
         ResourceFactory factory = gd.ResourceFactory;
         var cl = factory.CreateCommandList();
@@ -38,18 +48,18 @@ internal class Program
         // gd.UpdateTexture(tex, pixelBytes, 0, 0, 0, width, height, 1, 0, 0);
         // TextureView texView = factory.CreateTextureView(tex);
 
-        if (!Interop.SpoutDx.SpoutDx_ReceiveTexture(spoutDx))
+        if (!spoutDx.ReceiveTexture())
         {
             Console.WriteLine("Could not receive texture!");
 
             return;
         }
 
-        var spoutReceivedTexture = Interop.SpoutDx.SpoutDx_GetSenderTexture(spoutDx);
+        var spoutReceivedTexture = spoutDx.GetSenderTexture();
 
-        var format = Interop.SpoutDx.SpoutDx_GetSenderFormat(spoutDx);
-        var width = Interop.SpoutDx.SpoutDx_GetSenderWidth(spoutDx);
-        var height = Interop.SpoutDx.SpoutDx_GetSenderHeight(spoutDx);
+        var format = spoutDx.GetSenderFormat();
+        var width = spoutDx.GetSenderWidth();
+        var height = spoutDx.GetSenderHeight();
 
         Console.WriteLine($"Texture info: {format}, {width}x{height}");
 
@@ -59,7 +69,7 @@ internal class Program
                 height,
                 1,
                 1,
-                PixelFormat.R8_G8_B8_A8_UNorm,
+                SpoutUtils.DxgiToVeldridPixelFormat(format),
                 TextureUsage.Sampled
             )
         );
@@ -146,19 +156,19 @@ void main()
             if (!window.Exists) break;
 
             // SpoutDX
-            if (!Interop.SpoutDx.SpoutDx_ReceiveTexture(spoutDx))
+            if (!spoutDx.ReceiveTexture())
             {
                 Console.WriteLine("Could not receive texture!");
 
                 return;
             }
 
-            if (Interop.SpoutDx.SpoutDx_IsUpdated(spoutDx))
+            if (spoutDx.IsUpdated())
             {
                 Console.WriteLine("Texture has been updated!!!! Should recreate veldrid texture there");
             }
 
-            if (Interop.SpoutDx.SpoutDx_IsFrameNew(spoutDx))
+            if (spoutDx.IsFrameNew())
             {
                 // Console.WriteLine($"Received new frame: {Interop.SpoutDx.SpoutDx_GetSenderFrame(spoutDx)}");
 
@@ -185,8 +195,6 @@ void main()
         }
 
         gd.WaitForIdle();
-
-        Interop.SpoutDx.SpoutDx_ReleaseReceiver(spoutDx);
     }
 
     struct Vertex
