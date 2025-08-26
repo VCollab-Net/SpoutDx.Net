@@ -789,7 +789,9 @@ bool spoutDX::ReceiveTexture()
 
 		// The sender name, width, height, format, shared texture handle and pointer have been retrieved.
 		if (m_bUpdated) {
-			m_bUpdated = false; // Reset for ReceiveSenderData
+			// We don't want this reset to be done now because we still need to signal it to the receiving application in IsUpdated()
+			//m_bUpdated = false; // Reset for ReceiveSenderData
+
 			// Update the receiving class texture.
 			if (!CheckTexture(m_Width, m_Height, m_dwFormat))
 				return false;
