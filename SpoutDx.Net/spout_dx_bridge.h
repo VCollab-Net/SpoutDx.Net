@@ -10,52 +10,48 @@ extern "C" {
     #pragma region Receiver
 
     __declspec(dllexport) void __cdecl SpoutDx_SetReceiverName(
-        void* spoutDxPtr,
+        spoutDX* spoutDx,
         const char* senderName
     );
 
     __declspec(dllexport) bool __cdecl SpoutDx_ReceiveTexture(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     );
 
     __declspec(dllexport) bool __cdecl SpoutDx_IsUpdated(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     );
 
     __declspec(dllexport) bool __cdecl SpoutDx_IsFrameNew(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     );
 
     __declspec(dllexport) bool __cdecl SpoutDx_IsConnected(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     );
 
     __declspec(dllexport) ID3D11Texture2D* __cdecl SpoutDx_GetSenderTexture(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     );
 
     __declspec(dllexport) UINT32 __cdecl SpoutDx_GetSenderFormat(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     );
 
     __declspec(dllexport) UINT32 __cdecl SpoutDx_GetSenderWidth(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     );
 
     __declspec(dllexport) UINT32 __cdecl SpoutDx_GetSenderHeight(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     );
 
     __declspec(dllexport) double __cdecl SpoutDx_GetSenderFps(
-        void* spoutDxPtr
-    );
-
-    __declspec(dllexport) INT64 __cdecl SpoutDx_GetSenderFrame(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     );
 
     __declspec(dllexport) char** __cdecl SpoutDx_GetSenderList(
-        void* spoutDxPtr,
+        spoutDX* spoutDx,
         int* count
     );
 
@@ -64,8 +60,32 @@ extern "C" {
         int count
     );
 
-    __declspec(dllexport) void __cdecl SpoutDx_ReleaseReceiver(void* spoutDxPtr);
+    __declspec(dllexport) void __cdecl SpoutDx_ReleaseReceiver(spoutDX* spoutDx);
 
     #pragma endregion Receiver
 
+    #pragma region Sender
+
+    __declspec(dllexport) bool __cdecl SpoutDx_SetSenderName(
+        spoutDX* spoutDx,
+        const char* senderName
+    );
+
+    __declspec(dllexport) void __cdecl SpoutDx_SetSenderFormat(
+        spoutDX* spoutDx,
+        UINT32 format
+    );
+
+    __declspec(dllexport) bool __cdecl SpoutDx_SendTexture(
+        spoutDX* spoutDx,
+        ID3D11Texture2D* pTexture
+    );
+
+    __declspec(dllexport) bool __cdecl SpoutDx_IsInitialized(
+        spoutDX* spoutDx
+    );
+
+    __declspec(dllexport) void __cdecl SpoutDx_ReleaseSender(spoutDX* spoutDx);
+
+    #pragma endregion Sender
 }

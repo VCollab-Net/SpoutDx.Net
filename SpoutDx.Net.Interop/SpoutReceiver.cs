@@ -104,15 +104,6 @@ public sealed class SpoutReceiver : IDisposable
     }
 
     /// <summary>
-    /// Fetch the sender frame count.
-    /// </summary>
-    /// <returns></returns>
-    public long GetSenderFrameCount()
-    {
-        return Interop.SpoutDx_GetSenderFrame(_spoutDxPointer);
-    }
-
-    /// <summary>
     /// Get a list of all the available sender names.
     /// </summary>
     /// <returns></returns>

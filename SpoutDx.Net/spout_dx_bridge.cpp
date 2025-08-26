@@ -20,112 +20,89 @@ extern "C" {
     #pragma region Receiver
 
     __declspec(dllexport) void __cdecl SpoutDx_SetReceiverName(
-        void* spoutDxPtr,
+        spoutDX* spoutDx,
         const char* senderName
     )
     {
-        auto* spoutDx = reinterpret_cast<spoutDX*>(spoutDxPtr);
-
         spoutDx->SetReceiverName(senderName);
     }
 
     __declspec(dllexport) bool __cdecl SpoutDx_ReceiveTexture(
-        void* spoutDxPtr)
+        spoutDX* spoutDx
+    )
     {
-        auto* spoutDx = reinterpret_cast<spoutDX*>(spoutDxPtr);
-
         return spoutDx->ReceiveTexture();
     }
 
     __declspec(dllexport) bool __cdecl SpoutDx_IsUpdated(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     )
     {
-        auto* spoutDx = reinterpret_cast<spoutDX*>(spoutDxPtr);
-
         return spoutDx->IsUpdated();
     }
 
     __declspec(dllexport) bool __cdecl SpoutDx_IsFrameNew(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     )
     {
-        auto* spoutDx = reinterpret_cast<spoutDX*>(spoutDxPtr);
-
         return spoutDx->IsFrameNew();
     }
 
     __declspec(dllexport) bool __cdecl SpoutDx_IsConnected(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     )
     {
-        auto* spoutDx = reinterpret_cast<spoutDX*>(spoutDxPtr);
-
         return spoutDx->IsConnected();
     }
 
     __declspec(dllexport) ID3D11Texture2D* __cdecl SpoutDx_GetSenderTexture(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     )
     {
-        auto* spoutDx = reinterpret_cast<spoutDX*>(spoutDxPtr);
-
         return spoutDx->GetSenderTexture();
     }
 
     __declspec(dllexport) UINT32 __cdecl SpoutDx_GetSenderFormat(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     )
     {
-        auto* spoutDx = reinterpret_cast<spoutDX*>(spoutDxPtr);
-
         return (UINT32)spoutDx->GetSenderFormat();
     }
 
     __declspec(dllexport) UINT32 __cdecl SpoutDx_GetSenderWidth(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     )
     {
-        auto* spoutDx = reinterpret_cast<spoutDX*>(spoutDxPtr);
-
         return spoutDx->GetSenderWidth();
     }
 
     __declspec(dllexport) UINT32 __cdecl SpoutDx_GetSenderHeight(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     )
     {
-        auto* spoutDx = reinterpret_cast<spoutDX*>(spoutDxPtr);
-
         return spoutDx->GetSenderHeight();
     }
 
     __declspec(dllexport) double __cdecl SpoutDx_GetSenderFps(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     )
     {
-        auto* spoutDx = reinterpret_cast<spoutDX*>(spoutDxPtr);
-
         return spoutDx->GetSenderFps();
     }
 
     __declspec(dllexport) INT64 __cdecl SpoutDx_GetSenderFrame(
-        void* spoutDxPtr
+        spoutDX* spoutDx
     )
     {
-        auto* spoutDx = reinterpret_cast<spoutDX*>(spoutDxPtr);
-
         return spoutDx->GetSenderFrame();
     }
 
     __declspec(dllexport) char** __cdecl SpoutDx_GetSenderList(
-            void* spoutDxPtr,
-            int* count
-        )
+        spoutDX* spoutDx,
+        int* count
+    )
     {
         // Map the C++ vector to C-style array
-        auto* spoutDx = reinterpret_cast<spoutDX*>(spoutDxPtr);
-
         auto namesSize = spoutDx->GetSenderCount();
         *count = namesSize;
 
@@ -159,14 +136,12 @@ extern "C" {
         free((char*)senderList);
     }
 
-    __declspec(dllexport) void __cdecl SpoutDx_ReleaseReceiver(void* spoutDxPtr)
+    __declspec(dllexport) void __cdecl SpoutDx_ReleaseReceiver(spoutDX* spoutDx)
     {
-        if (!spoutDxPtr)
+        if (!spoutDx)
         {
             return;
         }
-
-        auto* spoutDx = reinterpret_cast<spoutDX*>(spoutDxPtr);
 
         spoutDx->ReleaseReceiver();
 
@@ -174,6 +149,45 @@ extern "C" {
     }
 
     #pragma endregion Receiver
+
+    #pragma region Sender
+
+    __declspec(dllexport) bool __cdecl SpoutDx_SetSenderName(
+        spoutDX* spoutDx,
+        const char* senderName
+    )
+    {
+        return spoutDx->SetSenderName(senderName);
+    }
+
+    __declspec(dllexport) bool __cdecl SpoutDx_SendTexture(
+        spoutDX* spoutDx,
+        ID3D11Texture2D* pTexture
+    )
+    {
+        return spoutDx->SendTexture(pTexture);
+    }
+
+    __declspec(dllexport) bool __cdecl SpoutDx_IsInitialized(
+        spoutDX* spoutDx
+    )
+    {
+        return spoutDx->IsInitialized();
+    }
+
+    __declspec(dllexport) void __cdecl SpoutDx_ReleaseSender(spoutDX* spoutDx)
+    {
+        if (!spoutDx)
+        {
+            return;
+        }
+
+        spoutDx->ReleaseSender();
+
+        delete spoutDx;
+    }
+
+    #pragma endregion Sender
 
     #pragma region Utils
 
