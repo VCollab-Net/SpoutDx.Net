@@ -2,11 +2,11 @@ using System.Runtime.InteropServices;
 
 namespace SpoutDx.Net.Interop;
 
-public sealed class SpoutDx : IDisposable
+public sealed class SpoutReceiver : IDisposable
 {
     private readonly IntPtr _spoutDxPointer;
 
-    public SpoutDx(IntPtr d3d11DevicePointer)
+    public SpoutReceiver(IntPtr d3d11DevicePointer)
     {
         _spoutDxPointer = Interop.SpoutDx_Create(d3d11DevicePointer);
     }

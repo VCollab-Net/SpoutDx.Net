@@ -21,7 +21,7 @@ internal class Program
         );
 
         // Initialize SpoutDX
-        using var spoutDx = new Interop.SpoutDx(gd.GetD3D11Info().Device);
+        using var spoutDx = new Interop.SpoutReceiver(gd.GetD3D11Info().Device);
 
         var receiverNames = spoutDx.GetSenderNames();
 
