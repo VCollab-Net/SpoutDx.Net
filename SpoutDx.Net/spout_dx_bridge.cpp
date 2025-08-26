@@ -160,6 +160,14 @@ extern "C" {
         return spoutDx->SetSenderName(senderName);
     }
 
+    __declspec(dllexport) void __cdecl SpoutDx_SetSenderFormat(
+        spoutDX* spoutDx,
+        UINT32 format
+    )
+    {
+        spoutDx->SetSenderFormat(static_cast<DXGI_FORMAT>(format));
+    }
+
     __declspec(dllexport) bool __cdecl SpoutDx_SendTexture(
         spoutDX* spoutDx,
         ID3D11Texture2D* pTexture
