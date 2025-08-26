@@ -55,6 +55,15 @@ extern "C" {
         return spoutDx->IsFrameNew();
     }
 
+    __declspec(dllexport) bool __cdecl SpoutDx_IsConnected(
+        void* spoutDxPtr
+    )
+    {
+        auto* spoutDx = reinterpret_cast<spoutDX*>(spoutDxPtr);
+
+        return spoutDx->IsConnected();
+    }
+
     __declspec(dllexport) ID3D11Texture2D* __cdecl SpoutDx_GetSenderTexture(
         void* spoutDxPtr
     )

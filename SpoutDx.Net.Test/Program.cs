@@ -25,13 +25,13 @@ internal class Program
 
         var receiverNames = spoutDx.GetSenderNames();
 
-        var receiverName = AnsiConsole.Prompt(
+        var senderName = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("Select a sender to read from")
                 .AddChoices(receiverNames)
         );
 
-        spoutDx.SetReceiverName(receiverName);
+        spoutDx.SenderName = senderName;
 
         ResourceFactory factory = gd.ResourceFactory;
         var cl = factory.CreateCommandList();
@@ -57,9 +57,9 @@ internal class Program
 
         var spoutReceivedTexture = spoutDx.GetSenderTexture();
 
-        var format = spoutDx.GetSenderFormat();
-        var width = spoutDx.GetSenderWidth();
-        var height = spoutDx.GetSenderHeight();
+        var format = spoutDx.SenderTextureFormat;
+        var width = spoutDx.SenderTextureWidth;
+        var height = spoutDx.SenderTextureHeight;
 
         Console.WriteLine($"Texture info: {format}, {width}x{height}");
 

@@ -26,6 +26,10 @@ extern "C" {
         void* spoutDxPtr
     );
 
+    __declspec(dllexport) bool __cdecl SpoutDx_IsConnected(
+        void* spoutDxPtr
+    );
+
     __declspec(dllexport) ID3D11Texture2D* __cdecl SpoutDx_GetSenderTexture(
         void* spoutDxPtr
     );

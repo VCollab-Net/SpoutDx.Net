@@ -31,6 +31,11 @@ internal partial class Interop
 
     [LibraryImport(DllName)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    [return: MarshalAs(UnmanagedType.I1)]
+    public static partial bool SpoutDx_IsConnected(IntPtr spoutDxPtr);
+
+    [LibraryImport(DllName)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
     public static partial IntPtr SpoutDx_GetSenderTexture(IntPtr spoutDxPtr);
 
     [LibraryImport(DllName)]
