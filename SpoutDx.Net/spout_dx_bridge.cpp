@@ -110,9 +110,9 @@ extern "C" {
 
         for (int i = 0; i < namesSize; i++)
         {
-            names[i] = static_cast<char*>(malloc(100 * sizeof(char)));
+            names[i] = static_cast<char*>(malloc(256 * sizeof(char)));
 
-            spoutDx->GetSender(i, names[i], 100);
+            spoutDx->GetSender(i, names[i], 256);
         }
 
         return names;
