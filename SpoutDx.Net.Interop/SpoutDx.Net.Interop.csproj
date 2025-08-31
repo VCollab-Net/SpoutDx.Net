@@ -5,11 +5,31 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+        <!-- NuGet package metadata -->
+        <PackageId>SpoutDx.Net.Interop</PackageId>
+        <Version>0.1.0</Version>
+        <Authors>Eveldee</Authors>
+        <Company>VCollab</Company>
+        <Description>A SpoutDx wrapper for C#/.Net</Description>
+        <PackageTags>Spout;Spout2;SpoutDx;Interop;Graphics</PackageTags>
+        <RepositoryUrl>https://github.com/VCollab-Net/SpoutDx.Net</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+
+        <!-- Output NuGet package to solution-level folder -->
+        <PackageOutputPath>$(SolutionDir)nupkgs</PackageOutputPath>
+
+        <!-- Include symbols for debugging -->
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
+    <!-- Include native DLL in build output and NuGet package -->
     <ItemGroup>
-        <Content Include="..\x64\Release\SpoutDx.Net.dll">
+        <None Include="..\x64\Release\SpoutDx.Net.dll" Pack="true" PackagePath="runtimes/win-x64/native">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
+        </None>
     </ItemGroup>
 </Project>
