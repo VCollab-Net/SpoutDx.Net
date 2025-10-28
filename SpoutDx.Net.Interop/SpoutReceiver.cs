@@ -12,24 +12,56 @@ public sealed class SpoutReceiver : IDisposable
     /// <para />
     /// https://learn.microsoft.com/fr-fr/windows/win32/api/dxgiformat/ne-dxgiformat-dxgi_format
     /// </summary>
-    public uint SenderTextureFormat => Interop.SpoutDx_GetSenderFormat(_spoutDxPointer);
+    public uint SenderTextureFormat
+    {
+        get
+        {
+            EnsureHandleIsValid();
+
+            return Interop.SpoutDx_GetSenderFormat(_spoutSafeHandle);
+        }
+    }
 
     /// <summary>
     /// Get Sender texture width (in pixels).
     /// </summary>
-    public uint SenderTextureWidth => Interop.SpoutDx_GetSenderWidth(_spoutDxPointer);
+    public uint SenderTextureWidth
+    {
+        get
+        {
+            EnsureHandleIsValid();
+
+            return Interop.SpoutDx_GetSenderWidth(_spoutSafeHandle);
+        }
+    }
 
     /// <summary>
     /// Get Sender height (in pixels).
     /// </summary>
-    public uint SenderTextureHeight => Interop.SpoutDx_GetSenderHeight(_spoutDxPointer);
+    public uint SenderTextureHeight
+    {
+        get
+        {
+            EnsureHandleIsValid();
+
+            return Interop.SpoutDx_GetSenderHeight(_spoutSafeHandle);
+        }
+    }
 
     /// <summary>
     /// Check if this receiver is connected to any sender.
     /// </summary>
-    public bool IsConnected => Interop.SpoutDx_IsConnected(_spoutDxPointer);
+    public bool IsConnected
+    {
+        get
+        {
+            EnsureHandleIsValid();
 
-    private readonly IntPtr _spoutDxPointer;
+            return Interop.SpoutDx_IsConnected(_spoutSafeHandle);
+        }
+    }
+
+    private readonly SpoutSafeHandle _spoutSafeHandle;
 
     private string? _senderName = null;
     /// <summary>
@@ -52,7 +84,9 @@ public sealed class SpoutReceiver : IDisposable
                 throw new ArgumentNullException(nameof(value), "Sender name cannot be null");
             }
 
-            Interop.SpoutDx_SetReceiverName(_spoutDxPointer, value);
+            EnsureHandleIsValid();
+
+            Interop.SpoutDx_SetReceiverName(_spoutSafeHandle, value);
 
             _senderName = value;
         }
@@ -64,7 +98,7 @@ public sealed class SpoutReceiver : IDisposable
     /// <param name="d3d11DevicePointer"></param>
     public SpoutReceiver(IntPtr d3d11DevicePointer)
     {
-        _spoutDxPointer = Interop.SpoutDx_Create(d3d11DevicePointer);
+        _spoutSafeHandle = SpoutSafeHandle.Allocate(SpoutSafeHandle.HandleType.Receiver, d3d11DevicePointer);
     }
 
     /// <summary>
@@ -73,7 +107,9 @@ public sealed class SpoutReceiver : IDisposable
     /// <returns>True if the texture could be read. False in case of an internal error</returns>
     public bool ReceiveTexture()
     {
-        return Interop.SpoutDx_ReceiveTexture(_spoutDxPointer);
+        EnsureHandleIsValid();
+
+        return Interop.SpoutDx_ReceiveTexture(_spoutSafeHandle);
     }
 
     /// <summary>
@@ -82,7 +118,9 @@ public sealed class SpoutReceiver : IDisposable
     /// <returns>True if the texture has changed, false otherwise.</returns>
     public bool IsUpdated()
     {
-        return Interop.SpoutDx_IsUpdated(_spoutDxPointer);
+        EnsureHandleIsValid();
+
+        return Interop.SpoutDx_IsUpdated(_spoutSafeHandle);
     }
 
     /// <summary>
@@ -91,7 +129,9 @@ public sealed class SpoutReceiver : IDisposable
     /// <returns>TTrue if a new frame is available, false otherwise</returns>
     public bool IsFrameNew()
     {
-        return Interop.SpoutDx_IsFrameNew(_spoutDxPointer);
+        EnsureHandleIsValid();
+
+        return Interop.SpoutDx_IsFrameNew(_spoutSafeHandle);
     }
 
     /// <summary>
@@ -100,7 +140,9 @@ public sealed class SpoutReceiver : IDisposable
     /// <returns>A pointer to a D3D11Texture2D</returns>
     public IntPtr GetSenderTexture()
     {
-        return Interop.SpoutDx_GetSenderTexture(_spoutDxPointer);
+        EnsureHandleIsValid();
+
+        return Interop.SpoutDx_GetSenderTexture(_spoutSafeHandle);
     }
 
     /// <summary>
@@ -109,7 +151,9 @@ public sealed class SpoutReceiver : IDisposable
     /// <returns></returns>
     public string[] GetSenderNames()
     {
-        var senderList = Interop.SpoutDx_GetSenderList(_spoutDxPointer, out var count);
+        EnsureHandleIsValid();
+
+        var senderList = Interop.SpoutDx_GetSenderList(_spoutSafeHandle, out var count);
 
         var names = new string[count];
         for (var i = 0; i < count; i++)
@@ -124,11 +168,19 @@ public sealed class SpoutReceiver : IDisposable
         return names;
     }
 
+    private void EnsureHandleIsValid()
+    {
+        if (_spoutSafeHandle.IsClosed || _spoutSafeHandle.IsInvalid)
+        {
+            throw new InvalidOperationException("Cannot use SpoutReceiver after disposing");
+        }
+    }
+
     /// <summary>
     /// Release the unmanaged receiver from SpoutDx and its attached resources. Failing to call this method will cause memory leaks.
     /// </summary>
     public void Dispose()
     {
-        Interop.SpoutDx_ReleaseReceiver(_spoutDxPointer);
+        _spoutSafeHandle.Dispose();
     }
 }

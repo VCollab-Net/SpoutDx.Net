@@ -8,7 +8,15 @@ public sealed class SpoutSender : IDisposable
     /// <summary>
     /// Check if this sender is initialized.
     /// </summary>
-    public bool IsInitialized => Interop.SpoutDx_IsInitialized(_spoutDxPointer);
+    public bool IsInitialized
+    {
+        get
+        {
+            EnsureHandleIsValid();
+
+            return Interop.SpoutDx_IsInitialized(_spoutSafeHandle);
+        }
+    }
 
     private string? _name = null;
     /// <summary>
@@ -31,7 +39,9 @@ public sealed class SpoutSender : IDisposable
                 throw new ArgumentNullException(nameof(value), "Sender name cannot be null");
             }
 
-            Interop.SpoutDx_SetSenderName(_spoutDxPointer, value);
+            EnsureHandleIsValid();
+
+            Interop.SpoutDx_SetSenderName(_spoutSafeHandle, value);
             _name = value;
         }
     }
@@ -50,12 +60,14 @@ public sealed class SpoutSender : IDisposable
                 return;
             }
 
-            Interop.SpoutDx_SetSenderFormat(_spoutDxPointer, value);
+            EnsureHandleIsValid();
+
+            Interop.SpoutDx_SetSenderFormat(_spoutSafeHandle, value);
             _textureFormat = value;
         }
     }
 
-    private readonly IntPtr _spoutDxPointer;
+    private readonly SpoutSafeHandle _spoutSafeHandle;
 
     /// <summary>
     /// Create a new instance of the wrapper with an already-initialized D3D11 device.
@@ -63,7 +75,7 @@ public sealed class SpoutSender : IDisposable
     /// <param name="d3d11DevicePointer"></param>
     public SpoutSender(IntPtr d3d11DevicePointer)
     {
-        _spoutDxPointer = Interop.SpoutDx_Create(d3d11DevicePointer);
+        _spoutSafeHandle = SpoutSafeHandle.Allocate(SpoutSafeHandle.HandleType.Sender, d3d11DevicePointer);
     }
 
     /// <summary>
@@ -75,7 +87,17 @@ public sealed class SpoutSender : IDisposable
     /// <returns></returns>
     public bool SendTexture(IntPtr d3d11TexturePointer)
     {
-        return Interop.SpoutDx_SendTexture(_spoutDxPointer, d3d11TexturePointer);
+        EnsureHandleIsValid();
+
+        return Interop.SpoutDx_SendTexture(_spoutSafeHandle, d3d11TexturePointer);
+    }
+
+    private void EnsureHandleIsValid()
+    {
+        if (_spoutSafeHandle.IsClosed || _spoutSafeHandle.IsInvalid)
+        {
+            throw new InvalidOperationException("Cannot use SpoutReceiver after disposing");
+        }
     }
 
     /// <summary>
@@ -83,6 +105,6 @@ public sealed class SpoutSender : IDisposable
     /// </summary>
     public void Dispose()
     {
-        Interop.SpoutDx_ReleaseSender(_spoutDxPointer);
+        _spoutSafeHandle.Dispose();
     }
 }

@@ -14,52 +14,52 @@ internal partial class Interop
 
     [LibraryImport(DllName, StringMarshalling = StringMarshalling.Utf8)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    public static partial void SpoutDx_SetReceiverName(IntPtr spoutDx, string senderName);
+    public static partial void SpoutDx_SetReceiverName(SpoutSafeHandle spoutDx, string senderName);
 
     [LibraryImport(DllName)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static partial bool SpoutDx_ReceiveTexture(IntPtr spoutDx);
+    public static partial bool SpoutDx_ReceiveTexture(SpoutSafeHandle spoutDx);
 
     [LibraryImport(DllName)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static partial bool SpoutDx_IsUpdated(IntPtr spoutDx);
+    public static partial bool SpoutDx_IsUpdated(SpoutSafeHandle spoutDx);
 
     [LibraryImport(DllName)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static partial bool SpoutDx_IsFrameNew(IntPtr spoutDx);
+    public static partial bool SpoutDx_IsFrameNew(SpoutSafeHandle spoutDx);
 
     [LibraryImport(DllName)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
-    public static partial bool SpoutDx_IsConnected(IntPtr spoutDx);
+    public static partial bool SpoutDx_IsConnected(SpoutSafeHandle spoutDx);
 
     [LibraryImport(DllName)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    public static partial IntPtr SpoutDx_GetSenderTexture(IntPtr spoutDx);
+    public static partial IntPtr SpoutDx_GetSenderTexture(SpoutSafeHandle spoutDx);
 
     [LibraryImport(DllName)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    public static partial uint SpoutDx_GetSenderFormat(IntPtr spoutDx);
+    public static partial uint SpoutDx_GetSenderFormat(SpoutSafeHandle spoutDx);
 
     [LibraryImport(DllName)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    public static partial uint SpoutDx_GetSenderWidth(IntPtr spoutDx);
+    public static partial uint SpoutDx_GetSenderWidth(SpoutSafeHandle spoutDx);
 
     [LibraryImport(DllName)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    public static partial uint SpoutDx_GetSenderHeight(IntPtr spoutDx);
+    public static partial uint SpoutDx_GetSenderHeight(SpoutSafeHandle spoutDx);
 
     [LibraryImport(DllName)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    public static partial double SpoutDx_GetSenderFps(IntPtr spoutDx);
+    public static partial double SpoutDx_GetSenderFps(SpoutSafeHandle spoutDx);
 
     [LibraryImport(DllName)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
     public static partial IntPtr SpoutDx_GetSenderList(
-        IntPtr spoutDx,
+        SpoutSafeHandle spoutDx,
         out int count
     );
 
@@ -82,14 +82,14 @@ internal partial class Interop
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool SpoutDx_SetSenderName(
-        IntPtr spoutDx,
+        SpoutSafeHandle spoutDx,
         string senderName
     );
 
     [LibraryImport(DllName)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
     public static partial void SpoutDx_SetSenderFormat(
-        IntPtr spoutDx,
+        SpoutSafeHandle spoutDx,
         uint format
     );
 
@@ -97,7 +97,7 @@ internal partial class Interop
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool SpoutDx_SendTexture(
-        IntPtr spoutDx,
+        SpoutSafeHandle spoutDx,
         IntPtr pTexture // pointer to ID3D11Texture2D
     );
 
@@ -105,7 +105,7 @@ internal partial class Interop
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
     [return: MarshalAs(UnmanagedType.I1)]
     public static partial bool SpoutDx_IsInitialized(
-        IntPtr spoutDx
+        SpoutSafeHandle spoutDx
     );
 
     [LibraryImport(DllName)]
